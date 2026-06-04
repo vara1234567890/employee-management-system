@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Employee Management System | Java Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #070b14;
+    --surface: #0f1624;
+    --surface2: #161f30;
+    --border: #1c2b42;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --purple: #a78bfa;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --font: 'Syne', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7,11,20,.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: .9rem 2rem; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-btn {
+    background: var(--accent); color: #fff; border: none; padding: 7px 18px;
+    border-radius: 8px; font-size: 13px; font-family: var(--font); font-weight: 500;
+    cursor: pointer; text-decoration: none; transition: opacity .2s;
+  }
+  .nav-btn:hover { opacity: .85; }
+
+  /* HERO */
+  .hero {
+    max-width: 900px; margin: 0 auto; padding: 5rem 2rem 3rem;
+    text-align: center; position: relative;
+  }
+  .hero-glow {
+    position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse at center, rgba(59,130,246,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .badge {
+    font-family: var(--mono); font-size: 11px; padding: 4px 12px;
+    border-radius: 20px; border: 1px solid; letter-spacing: .04em;
+  }
+  .badge.java { color: #f59e0b; border-color: #f59e0b55; background: #f59e0b10; }
+  .badge.jdbc { color: #06b6d4; border-color: #06b6d455; background: #06b6d410; }
+  .badge.mysql { color: #10b981; border-color: #10b98155; background: #10b98110; }
+  .badge.swing { color: #a78bfa; border-color: #a78bfa55; background: #a78bfa10; }
+  .badge.oop { color: #3b82f6; border-color: #3b82f655; background: #3b82f610; }
+  h1 { font-size: clamp(36px,6vw,58px); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 1.25rem; }
+  h1 .accent { color: var(--accent); }
+  .hero-sub { font-size: 16px; color: var(--muted); line-height: 1.8; max-width: 560px; margin: 0 auto 2rem; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #fff; text-decoration: none;
+    padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 8px; transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .85; }
+  .btn-outline {
+    background: transparent; color: var(--text); text-decoration: none;
+    border: 1px solid var(--border); padding: 12px 28px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;
+    transition: border-color .2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); }
+
+  /* STATS BAR */
+  .stats-bar {
+    max-width: 700px; margin: 3rem auto; padding: 0 2rem;
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+  }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem; text-align: center;
+  }
+  .stat-num { font-size: 32px; font-weight: 800; font-family: var(--mono); }
+  .stat-num.blue { color: var(--accent); }
+  .stat-num.green { color: var(--green); }
+  .stat-num.amber { color: var(--amber); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* SECTION */
+  section { max-width: 900px; margin: 0 auto; padding: 2rem 2rem 0; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;
+  }
+  .section-header h2 { font-size: 13px; font-family: var(--mono); color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* MODULES */
+  .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 12px; margin-bottom: 2rem; }
+  .module-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.25rem;
+    transition: border-color .2s, transform .2s;
+  }
+  .module-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .mod-head { display: flex; align-items: center; gap: 10px; margin-bottom: .75rem; }
+  .mod-icon {
+    width: 38px; height: 38px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+  }
+  .mod-icon.add { background: #10b98120; color: var(--green); }
+  .mod-icon.view { background: #3b82f620; color: var(--accent); }
+  .mod-icon.update { background: #f59e0b20; color: var(--amber); }
+  .mod-icon.delete { background: #ef444420; color: var(--red); }
+  .mod-icon.db { background: #06b6d420; color: var(--accent2); }
+  .mod-icon.home { background: #a78bfa20; color: var(--purple); }
+  .mod-icon.table { background: #3b82f620; color: var(--accent); }
+  .module-card h3 { font-size: 14px; font-weight: 500; }
+  .module-card .file-tag { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .module-card p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  /* ARCHITECTURE */
+  .arch-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.75rem; margin-bottom: 2rem;
+  }
+  .arch-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .arch-step {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 9px; padding: 10px 16px; font-size: 13px; font-family: var(--mono);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .arch-step .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .arch-arrow { color: var(--muted); font-size: 18px; }
+  .arch-desc { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+  .arch-desc p { font-size: 13px; color: var(--muted); line-height: 1.8; }
+  .arch-desc p strong { color: var(--text); }
+
+  /* TECH STACK */
+  .tech-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 2rem; }
+  .tech-pill {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: .6rem 1.1rem; font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tech-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* FEATURES */
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 10px; margin-bottom: 2rem; }
+  .feat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1rem 1.1rem; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .feat-icon { color: var(--accent); font-size: 20px; margin-top: 1px; flex-shrink: 0; }
+  .feat-card h4 { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .feat-card p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); margin-top: 4rem; padding: 2rem;
+    text-align: center;
+  }
+  footer p { font-size: 12px; color: var(--muted); }
+  footer span { color: var(--accent); }
+
+  @media(max-width:600px){
+    .nav-links { display: none; }
+    .hero { padding: 3rem 1.25rem 2rem; }
+    h1 { font-size: 32px; }
+    .stats-bar { grid-template-columns: repeat(3,1fr); gap: 8px; padding: 0 1.25rem; }
+    section { padding: 1.5rem 1.25rem 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">EMS <span>·</span> Java Project</div>
+  <div class="nav-links">
+    <a href="#modules">Modules</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#tech">Tech Stack</a>
+  </div>
+  <a href="#modules" class="nav-btn">View Project</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="badge-row">
+    <span class="badge java">Java SE</span>
+    <span class="badge jdbc">JDBC</span>
+    <span class="badge mysql">MySQL</span>
+    <span class="badge swing">Swing GUI</span>
+    <span class="badge oop">OOP</span>
+  </div>
+  <h1>Employee<br/>Management <span class="accent">System</span></h1>
+  <p class="hero-sub">
+    A full-featured desktop Java application for managing employee records — built with Swing for the GUI layer and JDBC for persistent MySQL database connectivity.
+  </p>
+  <div class="hero-btns">
+    <a href="#modules" class="btn-primary">
+      <i class="ti ti-code" aria-hidden="true"></i> Explore Modules
+    </a>
+    <a href="#architecture" class="btn-outline">
+      <i class="ti ti-sitemap" aria-hidden="true"></i> Architecture
+    </a>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-num blue">7</div>
+    <div class="stat-label">Java Classes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num green">4</div>
+    <div class="stat-label">CRUD Operations</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num amber">1</div>
+    <div class="stat-label">DB Layer</div>
+  </div>
+</div>
+
+<!-- MODULES -->
+<section id="modules">
+  <div class="section-header"><h2>Project Modules</h2></div>
+  <div class="modules-grid">
+    <div class="module-card">
+      <div class="mod-head">
+        <div class="mod-icon home"><i class="ti ti-layout-dashboard" aria-hidden="true"></i></div>
+        <div>
+          <h3>Home</h3>
+          <span class="file-tag">Home.class</span>
+        </div>
+      </div>
+      <p>Main entry point and navigation hub — routes users to all CRUD operations from a central dashboard.</p>
+    </div>
+    <div class="module-card">
+      <div class="mod-head">
+        <div class="mod-icon db"><i class="ti ti-database" aria-hidden="true"></i></div>
+        <div>
+          <h3>DB Connection</h3>
+          <span class="file-tag">DBConnection.class</span>
+        </div>
+      </div>
+      <p>Manages JDBC driver registration and establishes the MySQL connection used across all modules.</p>
+    </div>
+    <div class="module-card">
+      <div class="mod-head">
+        <div class="mod-icon add"><i class="ti ti-user-plus" aria-hidden="true"></i></div>
+        <div>
+          <h3>Add Employee</h3>
+          <span class="file-tag">AddEmployee.class</span>
+        </div>
+      </div>
+      <p>Input form to capture employee details and insert new records into the database via PreparedStatement.</p>
+    </div>
+    <div class="module-card">
+      <div class="mod-head">
+        <div class="mod-icon view"><i class="ti ti-eye" aria-hidden="true"></i></div>
+        <div>
+          <h3>View Employee</h3>
+          <span class="file-tag">ViewEmployee.class</span>
+        </div>
+      </div>
+      <p>Search and display individual employee details by ID using a JDBC ResultSet query.</p>
+    </div>
+    <div class="module-card">
+      <div class="mod-head">
+        <div class="mod-icon table"><i class="ti ti-table" aria-hidden="true"></i></div>
+        <div>
+          <h3>View All</h3>
+          <span class="file-tag">ViewAll.class</span>
+        </div>
+      </div>
+      <p>Fetches all employee records from the DB and renders them in a Swing JTable for easy browsing.</p>
+    </div>
+    <div class="module-card">
+      <div class="mod-head">
+        <div class="mod-icon update"><i class="ti ti-pencil" aria-hidden="true"></i></div>
+        <div>
+          <h3>Update Employee</h3>
+          <span class="file-tag">UpdateEmployee.class</span>
+        </div>
+      </div>
+      <p>Edit form pre-populated with existing data; submits an SQL UPDATE to persist changes.</p>
+    </div>
+    <div class="module-card">
+      <div class="mod-head">
+        <div class="mod-icon delete"><i class="ti ti-trash" aria-hidden="true"></i></div>
+        <div>
+          <h3>Delete Employee</h3>
+          <span class="file-tag">DeleteEmployee.class</span>
+        </div>
+      </div>
+      <p>Removes an employee record from the database after confirmation, using a parameterized DELETE query.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-header"><h2>Architecture</h2></div>
+  <div class="arch-box">
+    <div class="arch-flow">
+      <div class="arch-step"><span class="dot" style="background:#a78bfa"></span>Swing UI</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-step"><span class="dot" style="background:#3b82f6"></span>Action Listener</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-step"><span class="dot" style="background:#06b6d4"></span>DBConnection</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-step"><span class="dot" style="background:#10b981"></span>JDBC API</div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-step"><span class="dot" style="background:#f59e0b"></span>MySQL Database</div>
+    </div>
+    <div class="arch-desc">
+      <p>
+        Each module class contains its own <strong>Swing JFrame</strong> and attaches <strong>ActionListeners</strong> to buttons.
+        On user interaction, the module calls <strong>DBConnection</strong> to get a live JDBC connection,
+        then executes <strong>PreparedStatements</strong> for safe, parameterized SQL queries against the MySQL database.
+        Results are displayed back in the Swing UI.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="tech">
+  <div class="section-header"><h2>Tech Stack</h2></div>
+  <div class="tech-grid">
+    <div class="tech-pill"><span class="tech-dot" style="background:#f59e0b"></span>Java SE 8+</div>
+    <div class="tech-pill"><span class="tech-dot" style="background:#06b6d4"></span>JDBC API</div>
+    <div class="tech-pill"><span class="tech-dot" style="background:#10b981"></span>MySQL 8</div>
+    <div class="tech-pill"><span class="tech-dot" style="background:#a78bfa"></span>Java Swing</div>
+    <div class="tech-pill"><span class="tech-dot" style="background:#3b82f6"></span>OOP Design</div>
+    <div class="tech-pill"><span class="tech-dot" style="background:#ef4444"></span>PreparedStatements</div>
+    <div class="tech-pill"><span class="tech-dot" style="background:#f59e0b"></span>ResultSet</div>
+  </div>
+
+  <div class="section-header" style="margin-top:2rem"><h2>Key Features</h2></div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <i class="ti ti-shield-check feat-icon" aria-hidden="true"></i>
+      <div>
+        <h4>SQL Injection Safe</h4>
+        <p>All queries use PreparedStatements to prevent injection attacks.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <i class="ti ti-refresh feat-icon" aria-hidden="true"></i>
+      <div>
+        <h4>Full CRUD</h4>
+        <p>Create, Read, Update, and Delete operations fully implemented.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <i class="ti ti-layout-2 feat-icon" aria-hidden="true"></i>
+      <div>
+        <h4>Desktop GUI</h4>
+        <p>Native Java Swing interface — no browser or web server needed.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <i class="ti ti-database feat-icon" aria-hidden="true"></i>
+      <div>
+        <h4>MySQL Persistence</h4>
+        <p>All records stored and retrieved from a relational database.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <i class="ti ti-components feat-icon" aria-hidden="true"></i>
+      <div>
+        <h4>Modular Design</h4>
+        <p>Each operation is a self-contained class — easy to extend.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <i class="ti ti-plug feat-icon" aria-hidden="true"></i>
+      <div>
+        <h4>Centralized DB Layer</h4>
+        <p>DBConnection class reused across all modules — DRY principle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Employee Management System &nbsp;·&nbsp; Built with <span>Java</span> + JDBC + MySQL &nbsp;·&nbsp; G. Varaprasad</p>
+</footer>
+
+</body>
+</html>
